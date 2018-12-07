@@ -25,6 +25,11 @@ shaders = [
   {'source':"glsl/input_attachment.glsl", 'entry':"main", 'stage':'frag'},
   {'source':"glsl/texel_buffer.glsl", 'entry':"main", 'stage':'vert'},
 
+  {'source':"glsl/raytracing.rahit.glsl", 'entry':"main", 'stage':'rahit'},
+  {'source':"glsl/raytracing.rchit.glsl", 'entry':"main", 'stage':'rchit'},
+  {'source':"glsl/raytracing.rgen.glsl", 'entry':"main", 'stage':'rgen'},
+  {'source':"glsl/raytracing.rmiss.glsl", 'entry':"main", 'stage':'rmiss'},
+
   {'source':"hlsl/append_consume.hlsl", 'entry':"main", 'profile':'ps_6_0', 'stage':'frag'},
   {'source':"hlsl/binding_array.hlsl", 'entry':"main", 'profile':'ps_6_0', 'stage':'frag'},
   {'source':"hlsl/binding_types.hlsl", 'entry':"main", 'profile':'ps_6_0', 'stage':'frag'},
