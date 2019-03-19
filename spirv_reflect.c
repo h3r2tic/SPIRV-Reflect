@@ -1806,6 +1806,8 @@ static SpvReflectResult ParseUAVCounterBindings(SpvReflectShaderModule* p_module
   char name[MAX_NODE_NAME_LENGTH];
   const char* k_count_tag = "@count";
 
+  memset(name, 0x00, MAX_NODE_NAME_LENGTH);
+
   for (uint32_t descriptor_index = 0; descriptor_index < p_module->descriptor_binding_count; ++descriptor_index) {
     SpvReflectDescriptorBinding* p_descriptor = &(p_module->descriptor_bindings[descriptor_index]);
 
@@ -1829,24 +1831,27 @@ static SpvReflectResult ParseUAVCounterBindings(SpvReflectShaderModule* p_module
     }
     // ...otherwise use old @count convention.
     else {
-      const size_t descriptor_name_length = strlen(p_descriptor->name);
+      if (p_descriptor->name != NULL) { // Conditionally read the name, as they dont exist in optimized builds
+          const size_t descriptor_name_length = strlen(p_descriptor->name);
 
-      memset(name, 0, MAX_NODE_NAME_LENGTH);    
-      memcpy(name, p_descriptor->name, descriptor_name_length);
-#if defined(WIN32)
-      strcat_s(name, MAX_NODE_NAME_LENGTH, k_count_tag);
-#else
-      strcat(name, k_count_tag);
-#endif
+          memset(name, 0, MAX_NODE_NAME_LENGTH);
+          memcpy(name, p_descriptor->name, descriptor_name_length);
+  #if defined(WIN32)
+          strcat_s(name, MAX_NODE_NAME_LENGTH, k_count_tag);
+  #else
+          strcat(name, k_count_tag);
+  #endif
 
-      for (uint32_t counter_descriptor_index = 0; counter_descriptor_index < p_module->descriptor_binding_count; ++counter_descriptor_index) {
-        SpvReflectDescriptorBinding* p_test_counter_descriptor = &(p_module->descriptor_bindings[counter_descriptor_index]);
-        if (p_test_counter_descriptor->descriptor_type != SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER) {
-          continue;
-        }
-        if (strcmp(name, p_test_counter_descriptor->name) == 0) {
-          p_counter_descriptor = p_test_counter_descriptor;
-          break;
+
+        for (uint32_t counter_descriptor_index = 0; counter_descriptor_index < p_module->descriptor_binding_count; ++counter_descriptor_index) {
+          SpvReflectDescriptorBinding* p_test_counter_descriptor = &(p_module->descriptor_bindings[counter_descriptor_index]);
+          if (p_test_counter_descriptor->descriptor_type != SPV_REFLECT_DESCRIPTOR_TYPE_STORAGE_BUFFER) {
+            continue;
+          }
+          if (strcmp(name, p_test_counter_descriptor->name) == 0) {
+            p_counter_descriptor = p_test_counter_descriptor;
+            break;
+          }
         }
       }
     }
