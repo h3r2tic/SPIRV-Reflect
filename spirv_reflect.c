@@ -4051,7 +4051,7 @@ SpvReflectResult spvReflectChangeDescriptorSetNumber(SpvReflectShaderModule*    
     // The descriptor sets for specific entry points might not be in this set,
     // so just match on set index.
     if (p_module->descriptor_sets[index].set == p_set->set) {
-      p_target_set = (SpvReflectDescriptorSet*)p_set;
+      p_target_set = &p_module->descriptor_sets[index];
       break;
     }
   }
